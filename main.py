@@ -7,7 +7,7 @@ data_stream = gps3.DataStream()
 gps_socket.connect()
 gps_socket.watch()
 
-gpsd.connect() # GPSD for access to random stuff
+gpsd.connect() # GPSD old API
 
 def get_alt():
     return data_stream.TPV['alt']
@@ -15,26 +15,31 @@ def get_alt():
 def get_lat():
     return data_stream.TPV['lat']
 
-def parse_satellite(satellite):
-    prn = "PRN: " + str(satellite["PRN"])
-    azimuth = "Azimuth: " + str(satellite["az"])
-    snr = "SNR: " + str(satellite["ss"])
-    elev = "Elevation: " + str(satellite["el"])
+def print_sat_information(sat):
+    prn = "PRN: " + str(sat["PRN"])
+    azimuth = "Azimuth: " + str(sat["az"])
+    snr = "SNR: " + str(sat["ss"])
+    elev = "Elevation: " + str(sat["el"])
     used = "Used: "
-    if satellite["used"]:
+    if sat["used"]:
         used += "Y"
     else:
         used += "N"
-    return prn + "    " + elev + "    " + azimuth + "    " + snr + "    " + used
+    return '{0: <8}'.format(prn) + "    " + '{0: <13}'.format(elev) + "    " + '{0: <13}'.format(azimuth) + "    " + '{0: <7}'.format(snr) + "    " + '{0: <7}'.format(used)
+
+def print_time_and_coords(data_stream):
+    data_stream.unpack(new_data)
+    print(str(datetime.now()) + " Latitude: " + str(data_stream.TPV['alt']) + " N: Longitude: " + str(data_stream.TPV['lat']) + " W")
 
 for new_data in gps_socket:
     if new_data:
+        # Prep data
         data_stream.unpack(new_data)
         packet = gpsd.get_current() # GPSD
-        # print('Alt = ', data_stream.TPV['alt'])
-        # print('Lat = ', data_stream.TPV['lat'])
+        # Print info for each satelite seen
         if data_stream.SKY["satellites"] != "n/a":
             for sat in data_stream.SKY["satellites"]:
-                print(parse_satellite(sat))
-        print(str(datetime.now()) + " " + str(data_stream.TPV['alt']) + " " + str(data_stream.TPV['lat']))
+                print(print_sat_information(sat))
+        # Print time, lat, lon
+        print_time_and_coords(data_stream)
         print(" ")
