@@ -31,7 +31,7 @@ def print_sat_information(sat):
 
 def print_time_and_coords(data_stream):
     data_stream.unpack(new_data)
-    print(str(datetime.now()) + " Latitude: " + str(data_stream.TPV['alt']) + " N: Longitude: " + str(data_stream.TPV['lat']) + " W")
+    print(str(datetime.now()) + " Latitude: " + str(data_stream.TPV['lat']) + " N: Longitude: " + str(data_stream.TPV['lat']) + " W")
 
 for new_data in gps_socket:
     if new_data:
