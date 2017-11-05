@@ -50,7 +50,7 @@ import time
 
 # Speed at which to refresh the program
 # First command line argument
-speed = int(sys.argv[0])
+speed = int(sys.argv[1])
 
 print("SPEED: " + str(speed))
 
