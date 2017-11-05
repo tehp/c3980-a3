@@ -29,16 +29,17 @@
 #--
 #-- Tested using python3. Other versions are not supported.
 #--
-#-- To run: python3 gps.py [speed]
+#-- Installing: pip3 install gps3, gpsd-py3
+#--
+#-- Running: python3 gps.py [speed]
 #--
 #-- Arguments:
 #--     [speed] - seconds (integer)
 #--         scecifies the time between refreshes of output.
+#--         setting this to 0 or not including it at all sets the program to run
+#--         as fast as gpsd allows it to.
 #--
 #-------------------------------------------------------------------------------
-
-# Non standard packages: gps3, gpsd-py3
-#
 
 from gps3 import gps3
 from datetime import datetime
@@ -48,7 +49,12 @@ import sys
 import time
 
 # Speed at which to refresh the program
-speed = int(sys.argv[1])
+# First command line argument
+if int(sys.argv[1]) > 0:
+    speed = int(sys.argv[1])
+else:
+    speed = 0
+
 print("SPEED: " + str(speed))
 
 # Setup connection
