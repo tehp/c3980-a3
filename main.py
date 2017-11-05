@@ -3,6 +3,14 @@
 from gps3 import gps3
 from datetime import datetime
 import gpsd
+import argparse
+import sys
+
+# Speed at which to refresh the program
+speed = int(sys.argv[1])
+
+
+print("SPEED: " + str(speed))
 
 gps_socket = gps3.GPSDSocket()
 data_stream = gps3.DataStream()
@@ -45,3 +53,4 @@ for new_data in gps_socket:
         # Print time, lat, lon
         print_time_and_coords(data_stream)
         print(" ")
+        time.sleep(speed)
