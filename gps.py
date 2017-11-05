@@ -51,7 +51,7 @@ import time
 # Speed at which to refresh the program
 # First command line argument
 if len(sys.argv) > 0:
-    speed = int(sys.argv[1])
+    speed = int(sys.argv[0])
 else:
     speed = 0
 
