@@ -5,6 +5,7 @@ from datetime import datetime
 import gpsd
 import argparse
 import sys
+import time
 
 # Speed at which to refresh the program
 speed = int(sys.argv[1])
