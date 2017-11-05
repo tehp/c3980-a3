@@ -1,4 +1,4 @@
-# Packages: gps3, gpsd-py3
+# Non standard packages: gps3, gpsd-py3
 
 from gps3 import gps3
 from datetime import datetime
@@ -9,19 +9,18 @@ import time
 
 # Speed at which to refresh the program
 speed = int(sys.argv[1])
-
-
 print("SPEED: " + str(speed))
 
+# Setup connection
 gps_socket = gps3.GPSDSocket()
 data_stream = gps3.DataStream()
 gps_socket.connect()
 gps_socket.watch()
 
-gpsd.connect() # GPSD old API
+gpsd.connect() # GPSD old API - Can be removed when packet is not depended on anymore.
 
-def get_alt():
-    return data_stream.TPV['alt']
+def get_lon():
+    return data_stream.TPV['lon']
 
 def get_lat():
     return data_stream.TPV['lat']
@@ -40,7 +39,7 @@ def print_sat_information(sat):
 
 def print_time_and_coords(data_stream):
     data_stream.unpack(new_data)
-    print(str(datetime.now()) + " Latitude: " + str(data_stream.TPV['lat']) + " N: Longitude: " + str(data_stream.TPV['lon']) + " W")
+    print(str(datetime.now()) + " Latitude: " + str(get_lat()) + " N: Longitude: " + str(get_lon()) + " W")
 
 for new_data in gps_socket:
     if new_data:
