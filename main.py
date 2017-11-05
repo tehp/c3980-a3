@@ -1,3 +1,5 @@
+# Packages: gps3, gpsd-py3
+
 from gps3 import gps3
 from datetime import datetime
 import gpsd
@@ -35,7 +37,7 @@ for new_data in gps_socket:
     if new_data:
         # Prep data
         data_stream.unpack(new_data)
-        packet = gpsd.get_current() # GPSD
+        # packet = gpsd.get_current() # GPSD old API, not needed anymore
         # Print info for each satelite seen
         if data_stream.SKY["satellites"] != "n/a":
             for sat in data_stream.SKY["satellites"]:
