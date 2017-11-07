@@ -29,13 +29,13 @@
 #--
 #-- Tested using python3. Other versions are not supported.
 #--
-#-- Installing: pip3 install gps3, gpsd-py3
+#-- Installing: pip3 install gps3 gpsd-py3 terminaltables
 #--
 #-- Running: python3 gps.py [speed]
 #--
 #-- Arguments:
 #--     [speed] - seconds (integer)
-#--         scecifies the time between refreshes of output.
+#--         specifies the time between refreshes of output.
 #--         setting this to 0 or not including it at all sets the program to run
 #--         as fast as gpsd allows it to.
 #--
@@ -43,6 +43,7 @@
 
 from gps3 import gps3
 from datetime import datetime
+from terminaltables import SingleTable
 import gpsd
 import argparse
 import sys
@@ -75,9 +76,36 @@ def get_lat():
 #-- REVISIONS:
 #-- N/A
 #--
-#-- DESIGNER: Angus Lam
+#-- DESIGNER: Angus Lam, Mackenzie Craig
 #--
 #-- PROGRAMMER: Mackenzie Craig
+#--
+#-- INTERFACE: print_time_and_coords(data_stream)
+#--
+#-- RETURNS: void
+#--
+#-- NOTES:
+#-- This function is called whenever the main loop occurs (based on 'speed').
+#-- Prints the time, as well as lat/lon.
+#-------------------------------------------------------------------------------
+def print_time_and_coords(data_stream):
+    data_stream.unpack(new_data)
+    table_time = [
+        [str(datetime.now()),  'Latitude: ' + str(get_lat()) + ' N', 'Longitude: ' + str(get_lon()) + ' W']
+    ]
+    time = SingleTable(table_time)
+    print(time.table)
+
+#-------------------------------------------------------------------------------
+#--
+#-- DATE: November 5th, 2017
+#--
+#-- REVISIONS:
+#-- N/A
+#--
+#-- DESIGNER: Angus Lam
+#--
+#-- PROGRAMMER: Mackenzie Craig, Angus Lam
 #--
 #-- INTERFACE: print_sat_information(sat)
 #--
@@ -96,7 +124,19 @@ def print_sat_information(sat):
         used = "Used: Y"
     else:
         used = "Used: N"
-    return '{0: <8}'.format(prn) + "    " + '{0: <13}'.format(el) + "    " + '{0: <13}'.format(az) + "    " + '{0: <7}'.format(ss) + "    " + '{0: <7}'.format(used)
+
+    prnF = '{0: <8}'.format(prn)
+    elF = '{0: <13}'.format(el)
+    azF = '{0: <13}'.format(az)
+    ssF = '{0: <7}'.format(ss)
+    usedF = '{0: <7}'.format(used)
+
+    table_time = [
+        [prnF, elF, azF, ssF, usedF]
+    ]
+    time = SingleTable(table_time)
+    print(time.table)
+
 
 #-------------------------------------------------------------------------------
 #--
@@ -105,22 +145,16 @@ def print_sat_information(sat):
 #-- REVISIONS:
 #-- N/A
 #--
-#-- DESIGNER: Angus Lam
+#-- DESIGNER: Angus Lam, Mackenzie Craig
 #--
-#-- PROGRAMMER: Mackenzie Craig
-#--
-#-- INTERFACE: print_time_and_coords(data_stream)
-#--
-#-- RETURNS: void
+#-- PROGRAMMER: Mackenzie Craig, Angus Lam
 #--
 #-- NOTES:
-#-- This function is called whenever the main loop occurs (based on 'speed').
-#-- Prints the time, as well as lat/lon.
+#-- This is the main loop of the program. The loop waits for new data in the
+#-- socket. When it detects new data, it unpacks it, and passes that information
+#-- to print_sat_information, once per sat. The loop also calls the
+#-- print_time_and_coords method once per new data in the socket.
 #-------------------------------------------------------------------------------
-def print_time_and_coords(data_stream):
-    data_stream.unpack(new_data)
-    print(str(datetime.now()) + " Latitude: " + str(get_lat()) + " N: Longitude: " + str(get_lon()) + " W")
-
 for new_data in gps_socket:
     if new_data:
         # Prep data
@@ -129,8 +163,8 @@ for new_data in gps_socket:
         # Print info for each satelite seen
         if data_stream.SKY["satellites"] != "n/a":
             for sat in data_stream.SKY["satellites"]:
-                print(print_sat_information(sat))
+                print_sat_information(sat)
         # Print time, lat, lon
         print_time_and_coords(data_stream)
-        print(" ")
         time.sleep(speed)
+        print(chr(27) + "[2J")
