@@ -101,6 +101,6 @@ for new_data in gps_socket:
             for sat in data_stream.SKY["satellites"]:
                 print_sat_information(sat)
         # Print time, lat, lon
-        print_time_and_coords(data_stream)
+        print_time_and_coords(data_stream, new_data, get_lat(), get_lon())
         time.sleep(speed)
         print(chr(27) + "[2J")

@@ -5,7 +5,7 @@
 #-- REVISIONS:
 #-- N/A
 #--
-#-- DESIGNER: Angus Lam, Mackenzie Craig
+#-- DESIGNER: Angus Lam
 #--
 #-- PROGRAMMER: Mackenzie Craig
 #--
@@ -22,10 +22,31 @@
 #from gps import get_lat
 #from gps import get_lon
 
-def print_time_and_coords(data_stream):
+from gps3 import gps3
+import gpsd
+from terminaltables import SingleTable
+
+
+# Setup connection
+gps_socket = gps3.GPSDSocket()
+data_stream = gps3.DataStream()
+gps_socket.connect()
+gps_socket.watch()
+
+gpsd.connect() # GPSD old API - Can be removed when packet is not depended on anymore.
+
+def get_lon():
+    return data_stream.TPV['lon']
+
+def get_lat():
+    return data_stream.TPV['lat']
+
+from datetime import datetime
+
+def print_time_and_coords(data_stream, new_data, lat, lon):
     data_stream.unpack(new_data)
     table_time = [
-        [str(datetime.now()),  'Latitude: ' + str(get_lat()) + ' N', 'Longitude: ' + str(get_lon()) + ' W']
+        [str(datetime.now()),  'Latitude: ' + str(lat) + ' N', 'Longitude: ' + str(lon) + ' W']
     ]
     time = SingleTable(table_time)
     print(time.table)

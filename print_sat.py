@@ -7,7 +7,7 @@
 #--
 #-- DESIGNER: Angus Lam
 #--
-#-- PROGRAMMER: Mackenzie Craig, Angus Lam
+#-- PROGRAMMER: Mackenzie Craig
 #--
 #-- INTERFACE: print_sat_information(sat)
 #--
@@ -17,6 +17,9 @@
 #-- This function is called once for each satellite seen.
 #-- See print_time_and_coords(data_stream).
 #-------------------------------------------------------------------------------
+
+from terminaltables import SingleTable
+
 def print_sat_information(sat):
     prn = "PRN: " + str(sat["PRN"])
     az = "Azimuth: " + str(sat["az"])
